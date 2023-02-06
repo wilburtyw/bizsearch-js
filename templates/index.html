@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<head>
+	<!-- Style -->
+	<link rel="stylesheet" href= "{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+	<!-- Search Area -->
+	<div class="search-frame">
+		<div class="search-title">
+			<h1 class="search-heading">Business Search
+			<small>Top best businesses near you!</small>
+			</h1>
+		</div>
+		<div class="search-form">
+			<form>
+				<div class="input">
+					<input class="input-field" type="text" placeholder="e.g. Sushi" id="term" name="term" required>
+					<label class="input-label" for="keyword">Keyword</label>
+				</div>
+				<div class="input">
+					<input class="input-field" type="text" placeholder="max: 10" id="radius" name="radius" required>
+					<label class="input-label" for="distance">Distance(Miles)</label>
+				</div>
+				<div class="input">
+					<select class="input-field" id="category" name="categories">
+						<option value="all">Default</option>
+						<option value="arts">Art & Entertainment</option>
+						<option value="health">Health & Medical</option>
+						<option value="hotelstravel">Hotels & Travel</option>
+						<option value="food">Food</option>
+						<option value="professional">Professional Service</option>
+					</select>
+					<label class="input-label" for="category">Category</label>
+				</div>
+				<div class="input" id="div-location">
+					<input class="input-field" type="text" id="location" required>
+					<label class="input-label" for="location">Location</label>
+				</div>
+				<!-- Params Not Displayed -->
+				<input type="hidden" id="lat" name="lat">
+				<input type="hidden" id="lng" name="lng">
+				<div class="check">
+				<label class="label-detect">Want us to auto-detect your location? Click Here</label>
+				<input class="checkbox" type="checkbox" id="ifDetect"><br>
+				</div>
+				<div class="form-button">
+					<input class="form-submit" type="button" id="submitButton" value="SUBMIT">
+					<input class="form-clear" type="button" onclick="pageClear()" value="CLEAR">
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- Result Area -->
+	<div class = div-result id = div-result>
+	</div>
+	<!-- Detail Area -->
+	<div class = div-detail id = div-detail>
+	</div>
+</body>
+<!-- JavaScript -->
+<script src = "static/functions.js"></script>

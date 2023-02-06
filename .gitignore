@@ -1,0 +1,13 @@
+# MAC OS File
+*.DS_Store
+
+# Google Cloud File
+.gcloudignore
+app.yaml
+
+# Python Environment
+env
+
+# Text File
+API.txt
+structure.md
