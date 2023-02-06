@@ -85,7 +85,12 @@ input.input-field {
 	outline: 0;
 	border-bottom-color: #94a9d8;
 }
-
+.input-field:disabled {
+	background-color: rgb(236, 236, 236);
+}
+.input-field:disabled + .input-label {
+	color: gainsboro;
+}
 /* 1.3.4 checkbox */
 .check { 
 	margin-top: 1rem;
