@@ -16,7 +16,7 @@ def send_report(path):
     return send_from_directory('static', path)
 
 # Fetch Yelp API
-@app.route('/bizsubmit', methods=['GET'])
+@app.route('/search', methods=['GET'])
 def fetchYelp():
 	if request.method == "GET":
 		headers = {"Authorization": "Bearer PMLBKGC8K4npV14Ncjme5xaxPrEoAi4D3QPm9qcHPt-nWjTrT-BtaMugRt-HoqYRqgtSav0nn08Czdru-_xEig3v3tU4M4X02K2_sbjOyKoONx54w9_WeN10_eMjY3Yx"}
@@ -33,7 +33,7 @@ def fetchYelp():
 		# response = requests.get('https://api.yelp.com/v3/businesses/search?' + params, headers=headers)
 		# return request
 
-@app.route('/getdetail', methods=['GET'])
+@app.route('/detail', methods=['GET'])
 def fetchYelpD():
 	if request.method == "GET":
 		headers = {"Authorization": "Bearer PMLBKGC8K4npV14Ncjme5xaxPrEoAi4D3QPm9qcHPt-nWjTrT-BtaMugRt-HoqYRqgtSav0nn08Czdru-_xEig3v3tU4M4X02K2_sbjOyKoONx54w9_WeN10_eMjY3Yx"}

@@ -1,172 +1,164 @@
-// STABLE - Clear submit form and results
-function pageClear() {
-	document.getElementById("term").value = '';
-	document.getElementById("radius").value = '';
-	document.getElementById("location").value = '';
-	document.getElementById("category").selectedIndex = 0;
-	document.getElementById("div-result").innerHTML = "";
-	document.getElementById("div-detail").innerHTML = "";
-	console.log("pageClear(): Complete!"); // debug
-}
+// Page Clear
+$("#clear").click(function() {
+	$("#term").val('');
+	$("#radius").val('');
+	$("#location").val('');
+	$("#category").prop("selectedIndex", 0);
+	$("#div-result").html("");
+	$("#div-detail").html("");
+	console.log("Page Clear!"); // debug
+})
 
-// Checkbox of address detection (listener)
-var checkbox = document.querySelector("#ifDetect");
-checkbox.addEventListener('change', async function() {
-	var locDiv = document.getElementById("div-location");
-	var locInput = document.getElementById("location");
-	if (!this.checked) {
-		locInput.removeAttribute('disabled');
-		locInput.required = "true";
-		console.log("checkbox: changed"); // debug
+// Checkbox listener
+$("#ifDetect").change(function() {
+	if (!$(this).is(':checked')) {
+		$("#location").prop('disabled', false);
+		$("#location").prop('required', true);
 	} else {
-		locInput.removeAttribute('required');
-		document.getElementById("location").value = ''; // Clean value
-		locInput.disabled = "true";
-		await fetchIpinfo(); // Fetch from Ipinfo and await
-		console.log("checkbox: changed"); // debug
+		$("#location").val('');
+		$("#location").prop('required', false);
+		$("#location").prop('disabled', true);
+		fetchIpinfo();
 	}
 });
 
 // Global variable storing latitute and longitude
-var lat
-var lng
-// fetch IP from ipinfo API
-async function fetchIpinfo() {
-	return fetch("https://ipinfo.io/json?token=7b00847c694a06")
-	.then(
-		(response) => response.json())
-	.then(
-		function(jsonResponse){
-			var loc = jsonResponse.loc.split(",")
-			lat = loc[0]
-			lng = loc[1]
-			console.log("fetchIpinfo(): Fetch Complete!"); // debug
-			return true
-		})
+var lat;
+var lng;
+
+// Fetch IP and return a promise
+function fetchIpinfo() {
+	return $.ajax({
+		url: "https://ipinfo.io/json?token=7b00847c694a06",
+		dataType: "json"
+	})
+	.done(function(jsonResponse) {
+		var loc = jsonResponse.loc.split(",");
+		lat = loc[0];
+		lng = loc[1];
+		console.log("IPINFO:" + jsonResponse.ip); // debug
+		return true;
+	});
 }
 
 // fetch Google Geocoding
-async function fetchGeoCode(url) {
+function fetchGeoCode(url) {
 	console.log("GEOCODE: Begin fetching..."); // debug
-	return fetch(url)
-	.then(
-		(response) => response.json())
-	.then(
-		function(jsonResponse){
-			console.log(jsonResponse, "GEOCODE: returning result") // debug
-			if (jsonResponse.results.length == 0) {
-				lat = -1;
-				lng = -1;
-			} else {
-			lat = jsonResponse.results[0].geometry.location.lat
-			lng = jsonResponse.results[0].geometry.location.lng
-			}
-		})
+	return $.ajax({
+		type: 'GET',
+		url: url,
+		dataType: 'json'
+	})
+	.done(function(jsonResponse) {
+		var jsonResponse
+		console.log(jsonResponse, "GEOCODE: returning result"); // debug
+		if (jsonResponse.results.length == 0) {
+		lat = -1;
+		lng = -1;
+		} else {
+		lat = jsonResponse.results[0].geometry.location.lat;
+		lng = jsonResponse.results[0].geometry.location.lng;
+		}
+	});
 }
 
 // Submit
-async function submitInfo(e) {
-	const ischeck = document.querySelector("#ifDetect");
-	if (ischeck.checked) {
-		document.getElementById("lat").value = lat
-		document.getElementById("lng").value = lng
-		console.log("FETCHED FROM IPINFO", lat, lng)
-	}
-	else {
-		let loca = document.getElementById("location").value;
+async function fetchIp() {
+	const ischeck = $("#ifDetect");
+	if (ischeck.is(':checked')) {
+		$("#lat").val(lat);
+		$("#lng").val(lng);
+	} else {
 		let url = "https://maps.googleapis.com/maps/api/geocode/json?address="
-		url = url.concat(loca + "&key=AIzaSyCQmhg-_5obRuWviOY5OjSkL6OZn-cb6bY");
-		await fetchGeoCode(url)
-		console.log("CHECKBOX: Address Fetched Automatically", lat, lng); // debug
-		document.getElementById("lat").value = lat
-		document.getElementById("lng").value = lng
-		console.log("FETCHED FROM GEOCODE", lat, lng)
+		url = url.concat($("#location").val() + "&key=AIzaSyCQmhg-_5obRuWviOY5OjSkL6OZn-cb6bY");
+		await fetchGeoCode(url);
+		console.log("Geocode:", lat, lng); // debug
+		$("#lat").val(lat);
+		$("#lng").val(lng);
 	}
 }
 
-document.getElementById("submitButton").addEventListener("click", async e => {
-	e.preventDefault(); // Prevent submit
-	if (!document.getElementById("term").checkValidity()) {
-		document.getElementById("term").reportValidity();
+$("#submitButton").click(function(e) {
+	e.preventDefault();
+	let term = $("#term");
+	let radius = $("#radius");
+	let location = $("#location");
+	if (!term[0].checkValidity()) {
+		term[0].reportValidity();
 		return false;
-	} else if (!document.getElementById("radius").checkValidity()) {
-		document.getElementById("radius").reportValidity();
+	} else if (!radius[0].checkValidity()) {
+		radius[0].reportValidity();
 		return false;
-	} else if (!document.getElementById("location").checkValidity()) {
-		document.getElementById("location").reportValidity();
+	} else if (!location[0].checkValidity()) {
+		location[0].reportValidity();
 		return false;
 	} else {
-		await submitInfo(); // Fetch lat and lng
-		console.log("XMLHttpRequest: Request Begin")
-		// Clean Details
-		document.getElementById("div-detail").innerHTML = "";
-		// XML request
-		var xhttp = new XMLHttpRequest();
-		var result = document.getElementById('div-result');
-		xhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				result.innerHTML = generateHTML(JSON.parse(this.responseText)); // Another callback here
-				var detail_anchor = document.getElementsByClassName("detail");
-				for (var i = 0; i < detail_anchor.length; i++) {
-					detail_anchor[i].addEventListener('click', function(e) {
-						e.preventDefault();
-					}, false);
-				}
-				result.scrollIntoView(true);
-			} else {
-				// result.innerHTML = "<div class = \"error\">Processing</div>";
+		fetchIp().then(function() {
+		$("#div-detail").html("");
+		let result = $("#div-result");
+		result.html("");
+		$.ajax({
+			type: "GET",
+			url: "/search",
+			data: {
+			term: term.val(),
+			latitude: lat,
+			longitude: lng,
+			radius: (radius.val() != "") ? parseInt(radius.val()) * 1609 : "",
+			categories: $("#category").val()
+			},
+			success: function(response) {
+				result.html(genResult(response));
+				$(".detail").click(function(e) {
+					e.preventDefault();
+				});
+				$('html, body').animate({
+					scrollTop: result.offset().top
+				}, 'slow');
+			},
+			error: function() {
+				result.html("<div class = \"error\">Processing</div>");
 			}
-		}
-		if (lat == -1) {
-			result.innerHTML = "<div class = \"error\">Invalid Input!</div>";
+		});
+		});
+	}
+	});  
+
+	function genResult(jsObj) {
+		var resultHTML;
+		if ("error" in jsObj) {
+			resultHTML = $("<div>", { class: "error" }).text("Invalid Input!");
+		} else if (jsObj.total == 0) {
+			resultHTML = $("<div>", { class: "error" }).text("No record has been found.");
 		} else {
-			var terms = document.getElementById("term").value
-			var radi = document.getElementById("radius").value
-			var cs = document.getElementById("category").value
-			var params = '/bizsubmit?' + "term=" + terms + "&latitude=" + lat + "&longitude=" + lng
-			if (radi != "") {
-				radi_int = parseInt(radi) * 1609;
-				r = radi_int.toString();
-				params = params + "&radius=" + r
+			resultHTML = $("<table>", { id: "resultTable" });
+			var thead = $("<thead>");
+			var tr = $("<tr>");
+			tr.append($("<td>").text("#"));
+			tr.append($("<td>").text("Image"));
+			tr.append($("<td>", { class: "thBtn", onclick: "sortTable(2)" }).text("Business Name"));
+			tr.append($("<td>", { class: "thBtn", onclick: "sortTable(3)" }).text("Rating"));
+			tr.append($("<td>", { class: "thBtn", onclick: "sortTable(4)" }).text("Distance (miles)"));
+			thead.append(tr);
+			resultHTML.append(thead);
+			var tbody = $("<tbody>");
+			for(var i=0; i<jsObj.businesses.length; i++) {
+				var Biz = jsObj.businesses[i];
+				var d = Biz.distance/1609;
+				d = d.toFixed(2);
+				var tr = $("<tr>");
+				var n = i + 1;
+				tr.append($("<td>", { class: "texts" }).text(n.toString()));
+				tr.append($("<td>", { class: "images" }).append($("<img>", { src: Biz.image_url })));
+				tr.append($("<td>", { class: "texts" }).append($("<a>", { href: "#div-detail", class: "detail", onclick: "getDetail(\"" + Biz.id + "\");return false;"}).text(Biz.name)));
+				tr.append($("<td>", { class: "texts" }).text(Biz.rating));
+				tr.append($("<td>", { class: "texts" }).text(d.toString()));
+				tbody.append(tr);
 			}
-			if (cs != "Default") params = params + "&categories=" + cs
-			xhttp.addEventListener('load', reqListener);
-			xhttp.open('GET', params, true);
-			xhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
-			xhttp.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
-			xhttp.send();
+			resultHTML.append(tbody);
 		}
+		return resultHTML;
 	}
-});
-
-function generateHTML(jsObj) {
-	if ("error" in jsObj) {
-		inHtml = "<div class = \"error\">Invalid Input!</div>"
-	} else if (jsObj.total == 0) {
-		inHtml = "<div class = \"error\">No record has been found.</div>"
-	} else {
-		inHtml = "<table id = resultTable>";
-		inHtml += "<thead><tr><td>No.</td><td>Image</td><td onclick = sortTable(2) class = theadButton>Business Name</td><td onclick = sortTable(3) class = theadButton>Rating</td><td onclick = sortTable(4) class = theadButton>Distance (miles)</td></tr></thead>"
-		inHtml += "<tbody>";
-		// output out the values
-		for(i=0;i<jsObj.businesses.length;i++) { //do for all planes (one per row)
-			Biz=jsObj.businesses[i]; //get properties of a plane (an object)
-			d = Biz.distance/1609;
-			d = d.toFixed(2);
-			inHtml+="<tr>"; //start a new row of the output table
-			n = i+1
-			inHtml += "<td class = texts>" + n.toString() + "</td>"
-			inHtml += "<td class = images><img src='"+ Biz.image_url +"'></td>"
-			inHtml += "<td class = texts><a href = \"#div-detail\" class=\"detail\" onclick = getDetail(\"" + Biz.id + "\");return\ false;>" + Biz.name + "</a></td>"
-			inHtml += "<td class = texts>" + Biz.rating + "</td>"
-			inHtml += "<td class = texts>" + d.toString() + "</td>"
-			inHtml += "</tr>";
-		}
-		inHtml += "</tbody>";
-		inHtml += "</table>";
-	}
-	return inHtml
-}
 
 function getDetail(id) {
 	console.log("XMLHttpRequest: Request for getting detail Begin")
@@ -281,4 +273,4 @@ function sortTable(col) {
 function reqListener() {
 	console.log('this.responseText:', this.responseText);
 	console.log('this.status:', this.status);
-  }
+}

@@ -2,6 +2,8 @@
 <head>
 	<!-- Style -->
 	<link rel="stylesheet" href= "{{ url_for('static', filename='css/style.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
 </head>
 <body>
 	<!-- Search Area -->
@@ -12,7 +14,7 @@
 			</h1>
 		</div>
 		<div class="search-form">
-			<form>
+			<form id="form">
 				<div class="input">
 					<input class="input-field" type="text" placeholder="e.g. Sushi" id="term" name="term" required>
 					<label class="input-label" for="keyword">Keyword</label>
@@ -36,7 +38,6 @@
 					<input class="input-field" type="text" id="location" required>
 					<label class="input-label" for="location">Location</label>
 				</div>
-				<!-- Params Not Displayed -->
 				<input type="hidden" id="lat" name="lat">
 				<input type="hidden" id="lng" name="lng">
 				<div class="check">
@@ -45,7 +46,7 @@
 				</div>
 				<div class="form-button">
 					<input class="form-submit" type="button" id="submitButton" value="SUBMIT">
-					<input class="form-clear" type="button" onclick="pageClear()" value="CLEAR">
+					<input class="form-clear" type="button" id="clear" value="CLEAR">
 				</div>
 			</form>
 		</div>
