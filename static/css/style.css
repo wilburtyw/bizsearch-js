@@ -165,107 +165,104 @@ input.checkbox {
   transform: translateY(0);
 }
 
-/* 2 div-result */
-.div-result {
+/* 2 result */
+.result {
 	width: 850px;
 	margin: 70px auto auto auto;
 	padding: 0;
+	font-family: "DM sans", sans-serif;
 }
-/* div-result table */
-.div-result table{
+/* result table */
+table{
 	width: 100%;
 }
-.div-result thead, tbody {
+thead, tbody {
 	text-align: center;
-	font-size: 14px;
-	border: 1px solid rgb(231,231,231);
+	font-size: 1rem;
 }
-.div-result thead {
+.result thead {
 	height: 40px;
 	font-weight: bold;
-	background-color: rgb(78,111,173);
+	background-color: #fb8332;
 	color: black;
-	font-family: Arial, Helvetica, sans-serif;
 }
-.div-result tbody {
+.result tbody {
 	background-color: white;
 	color: black;
-	font-family: 'Noto Sans SC', sans-serif;
 }
-/* div-result anchor */
-.div-result a {
+/* result anchor */
+.result a {
 	text-decoration: none;
   	color: black;
   	outline: 0;
   	cursor: pointer;
 }
-.div-result a:hover {
+.result a:hover {
 	color:rgb(213, 213, 213)
 }
-
 .thBtn {
-	cursor: pointer;
+	cursor: s-resize;
 }
-/* div-result images */
-.div-result img {
+/* result images */
+.result img {
 	width: 100px;
 	height: 100px;
 	object-fit: cover;
 }
 
-/* div-detail */
-.div-detail {
+/* detail */
+.detail {
 	width: 800px;
 	margin: 70px auto auto auto;
 }
-/* div-detail inner block (generation) */
-.div-detail-in {
+/* detail inner block (generation) */
+.detail-in {
 	background-color: white;
 	border: 1px solid rgb(213,213,213);
 	padding: 3% 6.2% 3% 6.2%;
 }
-/* div-detail thematic break */
-.div-detail hr {
+/* detail thematic break */
+.detail hr {
 	width: 650px;
 	margin: 25px auto 25px auto;
 	color:rgb(180, 180, 180)
 }
-/* .div-detail single, double {
+/* .detail single, double {
 } */
-.div-detail .single {
+.detail .single {
 	text-align: center;
 }
-.div-detail .double {
+.detail .double {
 	margin: 10px auto 10px auto;
 }
-.div-detail .texts {
+.detail .texts {
 	width: 50%;
 	height: 80px;
 	margin: 10px auto 10px auto;
 	display: inline-block;
 }
-.div-detail h2 {
+.detail h2 {
 	font-family: Arial, Helvetica, sans-serif;
 	line-height: 1.5;
 	font-size: 20px;
 	font-weight: bold;
 	color: black;
 }
-.div-detail p {
+.detail p {
 	line-height: 0.7;
 	font-family: 'Noto Sans SC', sans-serif;
 	font-size: 14px;
 	color: black;
 	display: table-cell;
 }
-.div-detail .images{
+.detail .images{
 	column-count: 3;
     margin: 0 20px 0 20px;
     display: flex;
     min-height: 100px;
 }
 /* Single image block */
-.div-detail .image{
+.detail .image{
 	width: 210px;
     border: 1px solid rgb(180, 180, 180);
     margin: 0 3px 10px 3px;
@@ -273,7 +270,7 @@ input.checkbox {
     flex: 1;
     position: relative;
 }
-.div-detail .image .text{
+.detail .image .text{
 	text-align: center;
     margin: 2px 39% 2px 39%;
     font-size: 13px;
@@ -281,7 +278,7 @@ input.checkbox {
     position: absolute;
     bottom: 0;
 }
-.div-detail .image img{
+.detail .image img{
 	width: 100%;
 	object-fit: cover;
 }

@@ -1,14 +1,3 @@
-// Page Clear
-$("#clear").click(function() {
-	$("#term").val('');
-	$("#radius").val('');
-	$("#location").val('');
-	$("#category").prop("selectedIndex", 0);
-	$("#div-result").html("");
-	$("#div-detail").html("");
-	console.log("Page Clear!"); // debug
-})
-
 // Checkbox listener
 $("#ifDetect").change(function() {
 	if (!$(this).is(':checked')) {
@@ -94,8 +83,8 @@ $("#submitButton").click(function(e) {
 		return false;
 	} else {
 		fetchIp().then(function() {
-		$("#div-detail").html("");
-		let result = $("#div-result");
+		$("#detail").html("");
+		let result = $("#result");
 		result.html("");
 		$.ajax({
 			type: "GET",
@@ -124,46 +113,46 @@ $("#submitButton").click(function(e) {
 	}
 	});  
 
-	function genResult(jsObj) {
-		var resultHTML;
-		if ("error" in jsObj) {
-			resultHTML = $("<div>", { class: "error" }).text("Invalid Input!");
-		} else if (jsObj.total == 0) {
-			resultHTML = $("<div>", { class: "error" }).text("No record has been found.");
-		} else {
-			resultHTML = $("<table>", { id: "resultTable" });
-			var thead = $("<thead>");
+function genResult(jsObj) {
+	var resultHTML;
+	if ("error" in jsObj) {
+		resultHTML = $("<div>", { class: "error" }).text("Invalid Input!");
+	} else if (jsObj.total == 0) {
+		resultHTML = $("<div>", { class: "error" }).text("No record has been found.");
+	} else {
+		resultHTML = $("<table>", { id: "resultTable" });
+		var thead = $("<thead>");
+		var tr = $("<tr>");
+		tr.append($("<td>").text("#"));
+		tr.append($("<td>").text("Image"));
+		tr.append($("<td>", { class: "thBtn", onclick: "sortTable(2)" }).text("Business Name"));
+		tr.append($("<td>", { class: "thBtn", onclick: "sortTable(3)" }).text("Rating"));
+		tr.append($("<td>", { class: "thBtn", onclick: "sortTable(4)" }).text("Distance (miles)"));
+		thead.append(tr);
+		resultHTML.append(thead);
+		var tbody = $("<tbody>");
+		for(var i = 0; i < jsObj.businesses.length; i++) {
+			var biz = jsObj.businesses[i];
+			var d = biz.distance/1609;
+			d = d.toFixed(2);
 			var tr = $("<tr>");
-			tr.append($("<td>").text("#"));
-			tr.append($("<td>").text("Image"));
-			tr.append($("<td>", { class: "thBtn", onclick: "sortTable(2)" }).text("Business Name"));
-			tr.append($("<td>", { class: "thBtn", onclick: "sortTable(3)" }).text("Rating"));
-			tr.append($("<td>", { class: "thBtn", onclick: "sortTable(4)" }).text("Distance (miles)"));
-			thead.append(tr);
-			resultHTML.append(thead);
-			var tbody = $("<tbody>");
-			for(var i=0; i<jsObj.businesses.length; i++) {
-				var Biz = jsObj.businesses[i];
-				var d = Biz.distance/1609;
-				d = d.toFixed(2);
-				var tr = $("<tr>");
-				var n = i + 1;
-				tr.append($("<td>", { class: "texts" }).text(n.toString()));
-				tr.append($("<td>", { class: "images" }).append($("<img>", { src: Biz.image_url })));
-				tr.append($("<td>", { class: "texts" }).append($("<a>", { href: "#div-detail", class: "detail", onclick: "getDetail(\"" + Biz.id + "\");return false;"}).text(Biz.name)));
-				tr.append($("<td>", { class: "texts" }).text(Biz.rating));
-				tr.append($("<td>", { class: "texts" }).text(d.toString()));
-				tbody.append(tr);
-			}
-			resultHTML.append(tbody);
+			var n = i + 1;
+			tr.append($("<td>", { class: "texts" }).text(n.toString()));
+			tr.append($("<td>", { class: "images" }).append($("<img>", { src: biz.image_url })));
+			tr.append($("<td>", { class: "texts" }).append($("<a>", { href: "#detail", class: "detail", onclick: "getDetail(\"" + biz.id + "\");return false;"}).text(biz.name)));
+			tr.append($("<td>", { class: "texts" }).text(biz.rating));
+			tr.append($("<td>", { class: "texts" }).text(d.toString()));
+			tbody.append(tr);
 		}
-		return resultHTML;
+		resultHTML.append(tbody);
 	}
+	return resultHTML;
+}
 
 function getDetail(id) {
 	console.log("XMLHttpRequest: Request for getting detail Begin")
 	var xhttp = new XMLHttpRequest();
-	var result = document.getElementById('div-detail');
+	var result = document.getElementById('detail');
 	xhttp.onreadystatechange = function() {
 		console.log("Onready")
 		if (this.readyState == 4 && this.status == 200) {
@@ -173,7 +162,7 @@ function getDetail(id) {
 			// result.innerHTML = "Processing";
 		}
 	}
-	params = "/getdetail?id=" + id
+	params = "/detail?id=" + id
 	console.log(params)
 	xhttp.addEventListener('load', reqListener);
 	xhttp.open('GET', params, true);
@@ -184,7 +173,7 @@ function getDetail(id) {
 
 function generateDetail(jsObj) {
 	// Title
-	inHtml = "<div class=\"div-detail-in\"><div class=\"single\"><h2>" + jsObj.name + "</h2></div><hr>"
+	inHtml = "<div class=\"detail-in\"><div class=\"single\"><h2>" + jsObj.name + "</h2></div><hr>"
 	// BEGIN TEXT CONTENT
 	inHtml += "<div class=\"double\">"
 	// STATUS
@@ -249,7 +238,6 @@ function generateDetail(jsObj) {
 }
 
 rev = new Array(1, 1, 1);
-// Reference: https://stackoverflow.com/questions/14267781/sorting-html-table-with-javascript
 function sortTable(col) {
 	table = document.getElementById("resultTable");
 	reverse = rev[col-2]
